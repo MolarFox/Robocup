@@ -1,0 +1,22 @@
+// Diagnostic sketches //
+	> Motors (Raw)
+	> Compass (Raw)
+	> Misc. Sensors (Raw)
+	> Motor control math sketch
+	> Touchscreen 
+	> Graphical UI
+	> Bus (Interface <--> Control)
+
+// Implementations //
+	> Fix touchscreen
+	> Make GUI interface
+	> Implement motor vis math model
+	> Magnetometer Z axis compensation (low priority)
+	> Kicker + roller
+		> Double bogey suspension w/ touch detector (elastic?)
+	> Movement variance amount (measure - need digitisor?)
+	
+// To collect //
+	> Power cable (batt --> pin)
+	> Sensors !!
+	> IR Ball
