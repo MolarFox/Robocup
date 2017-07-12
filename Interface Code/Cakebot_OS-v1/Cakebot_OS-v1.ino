@@ -44,11 +44,14 @@ void setup() {
   tft.setRotation(3);
 
   drawMainWindow("    - COMD MODULE MONITOR -",0xFFE0, GREEN);  // Draws menubar and screen borders
+  drawBotSchematic();
 }
+
 
 void loop() {
   
 }
+
 
 // Function to draw outer screen borders and menubar (Window title, title colour, border colour)
 void drawMainWindow(String winTitle, int winTitleColour, int BorderColour){
@@ -75,6 +78,41 @@ void drawMainWindow(String winTitle, int winTitleColour, int BorderColour){
 
   drawBatteryIcon();
 }
+
+
+// Function to draw the bot diagram onto the screen
+void drawBotSchematic(){
+  tft.drawCircle(75, 90, 60, WHITE);  // Bot base outline
+  tft.drawCircle(75, 90, 59, WHITE);
+  tft.fillRect(55, 142, 40, 15, BLACK);
+  tft.drawRect(55, 142, 40, 15, YELLOW);  // M1 (simple rectangle)
+
+  // Triangles for motor 3 (no inbuilt slanted rectangle function)
+  tft.drawTriangle( // M3-1
+    28.29,      39,          // Point D
+    8.29, 73.64,  // Point A
+    21.29,  39 + 42.14,  // Point E
+    YELLOW);
+  tft.drawTriangle( // M3-2
+    28.29,      39,          // Point D
+    21.29,  81.14,  // Point E
+    41.29, 46.5,    // Point B
+    YELLOW);
+
+  const int pointD2[2] = {127.71, 39};  //  Complement reference point to above
+  // Triangles for motor 2 (no inbuilt slanted rectangle function)
+  tft.drawTriangle( // M3-1
+    127.71, 81.14,  // Point D
+    107.71, 46.5,   // Point A
+    120.71, 39,     // Point E
+    YELLOW);
+  tft.drawTriangle( // M3-2
+    127.71, 81.14,  // Point D
+    120.71, 39,     // Point E
+    140.71, 73.64,  // Point B
+    YELLOW);
+}
+
 
 // Function to measure then display battery levels on menubar (Do not call function too quickly)
 void drawBatteryIcon(){
@@ -120,6 +158,7 @@ void drawBatteryIcon(){
     
   }
 }
+
 
 // Voltage determination function (By RetroLefty - Arduino Forums)
 int getcurrVcc(void){ // Returns actual value of Vcc (x 100) Volts
