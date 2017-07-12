@@ -86,23 +86,24 @@ void drawBotSchematic(){
   tft.drawCircle(75, 90, 59, WHITE);
   tft.fillRect(55, 142, 40, 15, BLACK);
   tft.drawRect(55, 142, 40, 15, YELLOW);  // M1 (simple rectangle)
-  
+
+  // See attached docs for math calculations for implementations below
   // Triangles for motor 3 (no inbuilt slanted rectangle function)
   tft.fillTriangle( // M3-1 (filling)
-    28.29,  39,          // Point D
+    28.29,  39,     // Point D
     8.29,   73.64,  // Point A
     21.29,  81.14,  // Point E
     BLACK);
   tft.drawTriangle( // M3-1
-    28.29,  39,          // Point D
+    28.29,  39,     // Point D
     8.29,   73.64,  // Point A
     21.29,  81.14,  // Point E
     YELLOW);
     
   tft.fillTriangle( // M3-2 (filling)
-    28.29,  39, // Point D
+    28.29,  39,     // Point D
     21.29,  81.14,  // Point E
-    41.29,  46.5,    // Point B
+    41.29,  46.5,   // Point B
     BLACK);
   tft.drawTriangle( // M3-2
     28.29,  39, // Point D
