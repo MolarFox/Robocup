@@ -46,17 +46,20 @@ void setup() {
   tft.drawLine(19, 0, 19, 15, THEMECOLOUR);
 
   // Team CI Icon
-  tft.setCursor(5, 4.5);
+  tft.setCursor(5, 4);
   tft.setTextColor(0x07FF);  tft.setTextSize(1);
   tft.print("CI");
-  tft.drawRect(3, 3.5, 14, 11, 0xF81F);
+  tft.drawRect(3, 3, 14, 10, 0xF81F);
 
   // Title Bar text
   tft.setCursor(23, 4);
   tft.setTextColor(WHITE);  tft.setTextSize(1);
   tft.print("CAKEBOT OS v1.0");
-  tft.setTextColor(RED);  tft.setTextSize(1);
-  tft.println("  - DIAGNOSTICS -");
+  tft.setTextColor(0xFFE0);  tft.setTextSize(1);
+  tft.println("    - COMD MODULE VALS -");
+
+  // Battery icon (TODO: Remove)
+  tft.drawRect(292, 2, 25, 11, RED);
 }
 
 void loop() {
