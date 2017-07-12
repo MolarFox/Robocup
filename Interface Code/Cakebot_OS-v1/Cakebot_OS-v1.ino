@@ -1,4 +1,4 @@
-/*  Sensor Visualisation code (no touch used)
+/*  Cakebot OS screen manager
  *  C: 12/07/2017 | LM: 12/07/2017
  *  ----------------------------------
  *  Reads in sensor info via serial from command unit and outputs to screen
