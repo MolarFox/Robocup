@@ -88,11 +88,22 @@ void drawBotSchematic(){
   tft.drawRect(55, 142, 40, 15, YELLOW);  // M1 (simple rectangle)
 
   // Triangles for motor 3 (no inbuilt slanted rectangle function)
+  tft.fillTriangle( // M3-1 (filling)
+    28.29,      39,          // Point D
+    8.29, 73.64,  // Point A
+    21.29,  39 + 42.14,  // Point E
+    BLACK);
   tft.drawTriangle( // M3-1
     28.29,      39,          // Point D
     8.29, 73.64,  // Point A
     21.29,  39 + 42.14,  // Point E
     YELLOW);
+    
+  tft.fillTriangle( // M3-2 (filling)
+    28.29,      39,          // Point D
+    21.29,  81.14,  // Point E
+    41.29, 46.5,    // Point B
+    BLACK);
   tft.drawTriangle( // M3-2
     28.29,      39,          // Point D
     21.29,  81.14,  // Point E
@@ -101,16 +112,28 @@ void drawBotSchematic(){
 
   const int pointD2[2] = {127.71, 39};  //  Complement reference point to above
   // Triangles for motor 2 (no inbuilt slanted rectangle function)
+  tft.fillTriangle( // M3-1 (Filling)
+    127.71, 81.14,  // Point D
+    107.71, 46.5,   // Point A
+    120.71, 39,     // Point E
+    BLACK);
   tft.drawTriangle( // M3-1
     127.71, 81.14,  // Point D
     107.71, 46.5,   // Point A
     120.71, 39,     // Point E
     YELLOW);
+    
+  tft.fillTriangle( // M3-2 (Filling)
+    127.71, 81.14,  // Point D
+    120.71, 39,     // Point E
+    140.71, 73.64,  // Point B
+    BLACK);
   tft.drawTriangle( // M3-2
     127.71, 81.14,  // Point D
     120.71, 39,     // Point E
     140.71, 73.64,  // Point B
     YELLOW);
+  tft.drawLine(119.71, 41, 127.71, 80.14, BLACK); // Cover leftover line from triangles drawn
 }
 
 
