@@ -32,9 +32,9 @@ Adafruit_TFTLCD tft(LCD_CS, LCD_CD, LCD_WR, LCD_RD, LCD_RESET); // Initialise TF
 #define BLACK       0x0000
 #define PINK        0xF8FA
 
-// Battery voltage levels (adjust as necessary)
-#define lowVolt     7.0
-#define highVolt    8.4
+// Battery voltage levels (millivolts) (adjust as necessary)
+#define lowVolt     7000
+#define highVolt    8400
 
 void setup() {
   tft.reset();
@@ -81,19 +81,16 @@ void drawBatteryIcon(){
   float battLevel = getcurrVcc();
   float battPercent;
   int LEVELCOLOUR;
-  if (battLevel < 540){ // If battery is less than 5.4v, likely connected to USB supply, not battery
+  if (battLevel < 5400){ // If battery is less than 5.4v, likely connected to USB supply, not battery
     tft.setCursor(296, 4);
     tft.setTextColor(GREEN);  tft.setTextSize(1);
     tft.print("PWR"); // Write inside battery instead of filling
     
     tft.drawRect(292, 2, 25, 11, GREEN);  // Draw battery
     tft.drawRect(289, 4, 4, 6, GREEN);    // Draw battery nib
-
-    //TEMP
-    tft.fillRect(293, 3, 23, 9, RED);
     
   }else{  // Battery is connected to VCC in
-    battPercent = (((battLevel/100) - lowVolt)/(highVolt-lowVolt))*100; // Determine battery percentage based on expected voltages
+    battPercent = ((battLevel - lowVolt)/(highVolt-lowVolt))*100; // Determine battery percentage based on expected voltages
     
     // Determine colour for battery level
     if (battPercent > 75) LEVELCOLOUR = GREEN;
@@ -101,14 +98,26 @@ void drawBatteryIcon(){
     else if (battPercent > 25) LEVELCOLOUR = YELLOW;
     else LEVELCOLOUR = RED;
 
-    //Draw icon fill
-    int fillAmount = 9*round((BattPercent/100));  // Find length of battery bar based on percentage
-    tft.fillRect(316-fillAmount, 3, fillAmount, 9, LEVELCOLOUR);
+    //Draw icon fill  
+    int fillAmount; // Holds length of filled in bar (pixels)
+    if (battLevel > highVolt) fillAmount = 23;  // Overflow high
+    else if (battLevel < highVolt) fillAmount = 0;  // Overflow low
+    else fillAmount = 0.23*battPercent;  // Find length of battery bar based on percentage
+    tft.fillRect(316 - fillAmount, 3, fillAmount, 9, LEVELCOLOUR);
     
     // Draw icon outline
-    tft.drawRect(292, 2, 25, 11, LEVELCOLOUR+1);    // Draw battery
-    if (battPercent > 95) tft.fillRect(289, 4, 4, 6, GREEN);  // Draw battery nib
-    else tft.drawRect(289, 4, 4, 6, GREEN); // Fill battery nib
+    if (battPercent > 95) tft.fillRect(289, 4, 4, 6, LEVELCOLOUR);  // Fill battery nib if full battery
+    if (fillAmount > 0){  // Bar is visible on screen
+      tft.drawRect(292, 2, 25, 11, WHITE);    // Draw plain battery
+      tft.drawRect(289, 4, 4, 6, WHITE);      // Draw plain battery nib
+    }else{  // battery is critical (bar not visible)
+      tft.drawRect(292, 2, 25, 11, RED);    // Draw critical battery
+      tft.drawRect(289, 4, 4, 6, RED);      // Draw critical battery nib
+      tft.setCursor(296, 4);
+      tft.setTextColor(RED);  tft.setTextSize(1);
+      tft.print("LOW"); // Write inside battery in place of fill
+    }
+    
   }
 }
 
@@ -127,5 +136,6 @@ int getcurrVcc(void){ // Returns actual value of Vcc (x 100) Volts
     while( ( (ADCSRA & (1<<ADSC)) != 0 ) );
        // Scale the value
     int results = (((InternalReferenceVoltage * 1024L) / ADC) + 5L) / 10L; // calculates for straight line value
+    results = results*10;
     return results;
    }
