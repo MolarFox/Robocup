@@ -40,15 +40,18 @@ int maxDrive = 75;          // Value of most activated motor (%)
 void setup() {
   mag.begin(); // Initialise magnetometer
   Serial.begin(9600); // TEMP
+  localDrive(6400);
+  Serial.print("M1 - "); Serial.println(M1);
+  Serial.print("M2 - "); Serial.println(M2);
+  Serial.print("M3 - "); Serial.println(M3);
 }
 
 void loop() {
-  relaxMag(); // Refreshes current mag readings
-  Serial.println(milHeading); // TEMP
+  relaxMag(); // Refreshes current mag readings (uses internally scheduled delay)
   
 }
 
-// Sets local drive values based on local angle
+// Sets local drive values based on local angle (mils)
 void localDrive(float driveAngle){
   float scaledownFactor; // Holds value to divide ratios into maxDrive percentage
   bool runReversed[3];  // Holds values for motor direction
@@ -111,6 +114,11 @@ void localDrive(float driveAngle){
   if (runReversed[2]) M3 = -1 * M3;
 }
 
+
+// Sets local rotation offset (about bot central axis) - CALL AFTER LOCALDRIVE
+void localRot(float rotMagnitude){
+  
+}
 
 // Relaxes information from magnetometer
 void relaxMag(void){
