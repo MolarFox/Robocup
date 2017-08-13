@@ -34,6 +34,7 @@ int locRotAngle, globRotAngle, locDriveAngle, globDriveAngle; // Values for cont
 
 float ratM1, ratM2, ratM3;  // Motor drive ratios
 float M1, M2, M3;           // Raw motor drive values (%)
+float offM1, offM2, offM3;  // Offset of each motor when driven (for rotation) (%)
 int maxDrive = 75;          // Value of most activated motor (%)
 
 
@@ -115,10 +116,32 @@ void localDrive(float driveAngle){
 }
 
 
-// Sets local rotation offset (about bot central axis) - CALL AFTER LOCALDRIVE
+// Sets local rotation offset (-100 <-> 100) (about bot central axis)
 void localRot(float rotMagnitude){
-  
+  offM1 = rotMagnitude;
+  offM2 = rotMagnitude;
+  offM3 = rotMagnitude;
 }
+
+
+// Drives motors
+void driveAll(void){
+  // Add rotation offsets
+  M1 = M1 + offM1;
+  M2 = M2 + offM2;
+  M3 = M3 + offM3;
+
+  // Drive motors
+  if (M1 > 0) analogWrite(drv[1], M1);
+  else analogWrite(drv[0], M1);
+  
+  if (M2 > 0) analogWrite(drv[3], M2);
+  else analogWrite(drv[2], M2);
+  
+  if (M3 > 0) analogWrite(drv[5], M3);
+  else analogWrite(drv[4], M3);
+}
+
 
 // Relaxes information from magnetometer
 void relaxMag(void){
