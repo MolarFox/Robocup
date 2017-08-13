@@ -2,6 +2,12 @@
  *  C: 13/08/2017 | LM: 13/08/2017
  *  ----------------------------------
  *  NB: This sketch needs to be converted to library
+ *  
+ *  Combines magnetometer info with local / global angle commands to steer + drive bot
+ *  Global rotation and global drive can be combined with local rotation input
+ *  Local drive is manual override, and can be combined with trailing local rotation input (will affect trajectory)
+ *  
+ *  Note: All angles are written as milliradians
  *  ----------------------------------
  *  By Rithesh R Jayaram
  *  ----------------------------------
@@ -42,7 +48,33 @@ void loop() {
   
 }
 
-// Sets 
+// Sets local drive values based on local angle
+void localDrive(float driveAngle){
+  // Begin by determining which sector of bot angle resides in
+  if (driveAngle > 1066.66){        // Angle is past M2
+    if (driveAngle < 3600){         // Angle between M2 and M1
+      ratM1 = 3200 - driveAngle;
+      ratM2 = driveAngle - 1066.66;
+      ratM3 = 0;
+    }else if (driveAngle < 5333.33){// Angle between M3 and M1
+      ratM1 = driveAngle - 3200;
+      ratM2 = 0;
+      ratM3 = 5333.33 - driveAngle;
+    }else if (driveAngle > 5333){   // Angle between M3 and 0 mils
+      ratM1 = 0;
+      ratM2 = (6400 - driveAngle) + 1066.66;
+      ratM3 = driveAngle - 5333.33;
+    }
+  }else if (driveAngle > -1){       // Angle between 0 mils and M2 (-1 used for continuity)
+    ratM1 = 0;
+    ratM2 = 1066.66 - driveAngle;
+    ratM3 = 1066.66 + driveAngle;
+  }
+
+  // Find highest motor value and reduce all to motor drive values based on ratio
+  
+}
+
 
 // Relaxes information from magnetometer
 void relaxMag(void){
