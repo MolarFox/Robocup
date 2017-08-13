@@ -34,7 +34,7 @@ int locRotAngle, globRotAngle, locDriveAngle, globDriveAngle; // Values for cont
 
 float ratM1, ratM2, ratM3;  // Motor drive ratios
 float M1, M2, M3;           // Raw motor drive values (%)
-int maxDrive;               // Value of most activated motor (%)
+int maxDrive = 75;          // Value of most activated motor (%)
 
 
 void setup() {
@@ -50,29 +50,65 @@ void loop() {
 
 // Sets local drive values based on local angle
 void localDrive(float driveAngle){
+  float scaledownFactor; // Holds value to divide ratios into maxDrive percentage
+  bool runReversed[3];  // Holds values for motor direction
+  
   // Begin by determining which sector of bot angle resides in
   if (driveAngle > 1066.66){        // Angle is past M2
     if (driveAngle < 3600){         // Angle between M2 and M1
+      runReversed[0] = false;
+      runReversed[1] = true;
+      runReversed[2] = false;
       ratM1 = 3200 - driveAngle;
       ratM2 = driveAngle - 1066.66;
       ratM3 = 0;
     }else if (driveAngle < 5333.33){// Angle between M3 and M1
+      runReversed[0] = true;
+      runReversed[1] = false;
+      runReversed[2] = false;
       ratM1 = driveAngle - 3200;
       ratM2 = 0;
       ratM3 = 5333.33 - driveAngle;
     }else if (driveAngle > 5333){   // Angle between M3 and 0 mils
+      runReversed[0] = false;
+      runReversed[1] = false;
+      runReversed[2] = true;
       ratM1 = 0;
       ratM2 = (6400 - driveAngle) + 1066.66;
       ratM3 = driveAngle - 5333.33;
     }
   }else if (driveAngle > -1){       // Angle between 0 mils and M2 (-1 used for continuity)
+    runReversed[0] = false;
+    runReversed[1] = false;
+    runReversed[2] = true;
     ratM1 = 0;
     ratM2 = 1066.66 - driveAngle;
     ratM3 = 1066.66 + driveAngle;
   }
 
   // Find highest motor value and reduce all to motor drive values based on ratio
-  
+  if (ratM1 > ratM2){
+    if (ratM1 > ratM3){ // M1 greatest
+      scaledownFactor = ratM1 / maxDrive;
+    }else{              // M3 greatest
+      scaledownFactor = ratM3 / maxDrive;
+    }
+  }else{
+    if (ratM2 > ratM3){ // M2 greatest
+      scaledownFactor = ratM2 / maxDrive;
+    }else{              // M3 greatest
+      scaledownFactor = ratM3 / maxDrive;
+    }
+  }
+
+  // Convert to motor drive percentages and compensate for direction
+  M1 = ratM1 / scaledownFactor;
+  M2 = ratM2 / scaledownFactor;
+  M3 = ratM3 / scaledownFactor;
+
+  if (runReversed[0]) M1 = -1 * M1;
+  if (runReversed[1]) M2 = -1 * M2;
+  if (runReversed[2]) M3 = -1 * M3;
 }
 
 
