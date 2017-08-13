@@ -63,61 +63,42 @@ void localDrive(float driveAngle){
   if (driveAngle > 533.33){
     if (driveAngle < 1600){           // At M2 sector
       runReversed[0] = true; runReversed[1] = false; runReversed[2] = false;
-      
+      ratM1 = 1600 - driveAngle;
+      ratM2 = 0;
+      ratM3 = driveAngle - 533.33;
     }else if (driveAngle < 2666.66){  // Between M2 and M1
       runReversed[0] = false; runReversed[1] = true; runReversed[2] = false;
-      
+      ratM1 = 2666.66 - driveAngle;
+      ratM2 = driveAngle - 1600;
+      ratM3 = 0;
     }else if (driveAngle < 3733.33){  // At M1 sector
       runReversed[0] = false; runReversed[1] = true; runReversed[2] = false;
-      
+      ratM1 = 0;
+      ratM2 = driveAngle - 2666.66;
+      ratM3 = 3733.33 - driveAngle;
     }else if (driveAngle < 4800){     // Between M1 and M3
-      runReversed[0] = false; runReversed[1] = true; runReversed[2] = false;
-      
+      runReversed[0] = true; runReversed[1] = false; runReversed[2] = false;
+      ratM1 = driveAngle - 3733.33;
+      ratM2 = 0;
+      ratM3 = 4800 - driveAngle;
     }else if (driveAngle < 5866.66){  // At M3 sector
-      runReversed[0] = false; runReversed[1] = true; runReversed[2] = false;
-      
+      runReversed[0] = true; runReversed[1] = false; runReversed[2] = false;
+      ratM1 = driveAngle - 4800;
+      ratM2 = 5866.66 - driveAngle;
+      ratM3 = 0;
     }else if (driveAngle < 6400){     // Between M3 and M2 (til 6400mil)
-      runReversed[0] = false; runReversed[1] = true; runReversed[2] = false;
-      
+      runReversed[0] = false; runReversed[1] = false; runReversed[2] = true;
+      ratM1 = 0;
+      ratM2 = (6400 - driveAngle) + 533.33;
+      ratM3 = driveAngle - 5866.66;
     }
   }else if (driveAngle > -1){         // Between M3 and M2 (from 6400mil)
-    runReversed[0] = false; runReversed[1] = true; runReversed[2] = false;
-    
-  }
-
-  /*
-  if (driveAngle > 1066.66){        // Angle is past M2
-    if (driveAngle < 3600){         // Angle between M2 and M1
-      runReversed[0] = false;
-      runReversed[1] = true;
-      runReversed[2] = false;
-      ratM1 = 3200 - driveAngle;
-      ratM2 = driveAngle - 1066.66;
-      ratM3 = 0;
-    }else if (driveAngle < 5333.33){// Angle between M3 and M1
-      runReversed[0] = true;
-      runReversed[1] = false;
-      runReversed[2] = false;
-      ratM1 = driveAngle - 3200;
-      ratM2 = 0;
-      ratM3 = 5333.33 - driveAngle;
-    }else if (driveAngle > 5333){   // Angle between M3 and 0 mils
-      runReversed[0] = false;
-      runReversed[1] = false;
-      runReversed[2] = true;
-      ratM1 = 0;
-      ratM2 = (6400 - driveAngle) + 1066.66;
-      ratM3 = driveAngle - 5333.33;
-    }
-  }else if (driveAngle > -1){       // Angle between 0 mils and M2 (-1 used for continuity)
-    runReversed[0] = false;
-    runReversed[1] = false;
-    runReversed[2] = true;
+    runReversed[0] = false; runReversed[1] = false; runReversed[2] = true;
     ratM1 = 0;
-    ratM2 = 1066.66 - driveAngle;
-    ratM3 = 1066.66 + driveAngle;
-  }*/
-
+    ratM2 = 533.33 - driveAngle;
+    ratM3 = 533.33 + driveAngle;
+  }
+  
   // Find highest motor value and reduce all to motor drive values based on ratio
   if (ratM1 > ratM2){
     if (ratM1 > ratM3){ // M1 greatest
@@ -141,6 +122,17 @@ void localDrive(float driveAngle){
   if (runReversed[0]) M1 = -1 * M1;
   if (runReversed[1]) M2 = -1 * M2;
   if (runReversed[2]) M3 = -1 * M3;
+
+  // Compensate for imbalance by equalising rotation ratio
+  if ((M1 + M2 + M3) != 0){
+    if (M1 == 0){
+      M1 = -1 * (M2 + M3);
+    }else if (M2 == 0){
+      M2 = -1 * (M1 + M3);
+    }else if (M3 == 0){
+      M3 = -1 * (M1 + M2);
+    }
+  }
 }
 
 
