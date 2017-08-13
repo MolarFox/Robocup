@@ -35,21 +35,23 @@ int locRotAngle, globRotAngle, locDriveAngle, globDriveAngle; // Values for cont
 float ratM1, ratM2, ratM3;  // Motor drive ratios
 float M1, M2, M3;           // Raw motor drive values (%)
 float offM1, offM2, offM3;  // Offset of each motor when driven (for rotation) (%)
-int maxDrive = 75;          // Value of most activated motor (%)
+int maxDrive = 15;          // Value of most activated motor (%)
 
 
 void setup() {
   mag.begin(); // Initialise magnetometer
+
+  // TEMP
   Serial.begin(9600); // TEMP
-  localDrive(6400);
-  Serial.print("M1 - "); Serial.println(M1);
-  Serial.print("M2 - "); Serial.println(M2);
-  Serial.print("M3 - "); Serial.println(M3);
+  digitalWrite(13, HIGH);
+  localDrive(4800);
+  localRot(0);
+  driveAll();
+  
 }
 
 void loop() {
   relaxMag(); // Refreshes current mag readings (uses internally scheduled delay)
-  
 }
 
 // Sets local drive values based on local angle (mils)
@@ -58,6 +60,32 @@ void localDrive(float driveAngle){
   bool runReversed[3];  // Holds values for motor direction
   
   // Begin by determining which sector of bot angle resides in
+  if (driveAngle > 533.33){
+    if (driveAngle < 1600){           // At M2 sector
+      runReversed[0] = true; runReversed[1] = false; runReversed[2] = false;
+      
+    }else if (driveAngle < 2666.66){  // Between M2 and M1
+      runReversed[0] = false; runReversed[1] = true; runReversed[2] = false;
+      
+    }else if (driveAngle < 3733.33){  // At M1 sector
+      runReversed[0] = false; runReversed[1] = true; runReversed[2] = false;
+      
+    }else if (driveAngle < 4800){     // Between M1 and M3
+      runReversed[0] = false; runReversed[1] = true; runReversed[2] = false;
+      
+    }else if (driveAngle < 5866.66){  // At M3 sector
+      runReversed[0] = false; runReversed[1] = true; runReversed[2] = false;
+      
+    }else if (driveAngle < 6400){     // Between M3 and M2 (til 6400mil)
+      runReversed[0] = false; runReversed[1] = true; runReversed[2] = false;
+      
+    }
+  }else if (driveAngle > -1){         // Between M3 and M2 (from 6400mil)
+    runReversed[0] = false; runReversed[1] = true; runReversed[2] = false;
+    
+  }
+
+  /*
   if (driveAngle > 1066.66){        // Angle is past M2
     if (driveAngle < 3600){         // Angle between M2 and M1
       runReversed[0] = false;
@@ -88,7 +116,7 @@ void localDrive(float driveAngle){
     ratM1 = 0;
     ratM2 = 1066.66 - driveAngle;
     ratM3 = 1066.66 + driveAngle;
-  }
+  }*/
 
   // Find highest motor value and reduce all to motor drive values based on ratio
   if (ratM1 > ratM2){
