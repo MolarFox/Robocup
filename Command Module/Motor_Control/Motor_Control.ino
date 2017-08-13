@@ -23,7 +23,7 @@ Adafruit_HMC5883_Unified mag = Adafruit_HMC5883_Unified(12345); // Instantiate m
 // STATIC VARIABLES //
 #define magReadDelay 2  // Minimum delay between magnetometer readings (milliseconds)
 // Pinouts of motors:    1CCW 1CW | 2CCW 2CW | 3CCW 3CW
-const int drv[6] =       {2,   3,    4,   5,    6,   7};
+const int drv[6] =       {7,   6,    5,   4,    3,   2};
 
 // VARIABLES //
 byte rotConType= 0;     // Current rotation mode (0 = auto, 1 = local, 2 = global)
@@ -35,7 +35,7 @@ int locRotAngle, globRotAngle, locDriveAngle, globDriveAngle; // Values for cont
 float ratM1, ratM2, ratM3;  // Motor drive ratios
 float M1, M2, M3;           // Raw motor drive values (%)
 float offM1, offM2, offM3;  // Offset of each motor when driven (for rotation) (%)
-int maxDrive = 15;          // Value of most activated motor (%)
+int maxDrive = 5;          // Value of most activated motor (%)
 
 
 void setup() {
@@ -43,9 +43,10 @@ void setup() {
 
   // TEMP
   Serial.begin(9600); // TEMP
+  pinMode(13, OUTPUT);
   digitalWrite(13, HIGH);
-  localDrive(4800);
-  localRot(0);
+  localDrive(0);
+  localRot(100);
   driveAll();
   
 }
@@ -60,33 +61,33 @@ void localDrive(float driveAngle){
   bool runReversed[3];  // Holds values for motor direction
   
   // Begin by determining which sector of bot angle resides in
-  if (driveAngle > 533.33){
-    if (driveAngle < 1600){           // At M2 sector
+  if (driveAngle >= 533.33){
+    if (driveAngle <= 1600){           // At M2 sector
       runReversed[0] = true; runReversed[1] = false; runReversed[2] = false;
       ratM1 = 1600 - driveAngle;
       ratM2 = 0;
       ratM3 = driveAngle - 533.33;
-    }else if (driveAngle < 2666.66){  // Between M2 and M1
+    }else if (driveAngle <= 2666.66){  // Between M2 and M1
       runReversed[0] = false; runReversed[1] = true; runReversed[2] = false;
       ratM1 = 2666.66 - driveAngle;
       ratM2 = driveAngle - 1600;
       ratM3 = 0;
-    }else if (driveAngle < 3733.33){  // At M1 sector
+    }else if (driveAngle <= 3733.33){  // At M1 sector
       runReversed[0] = false; runReversed[1] = true; runReversed[2] = false;
       ratM1 = 0;
       ratM2 = driveAngle - 2666.66;
       ratM3 = 3733.33 - driveAngle;
-    }else if (driveAngle < 4800){     // Between M1 and M3
+    }else if (driveAngle <= 4800){     // Between M1 and M3
       runReversed[0] = true; runReversed[1] = false; runReversed[2] = false;
       ratM1 = driveAngle - 3733.33;
       ratM2 = 0;
       ratM3 = 4800 - driveAngle;
-    }else if (driveAngle < 5866.66){  // At M3 sector
+    }else if (driveAngle <= 5866.66){  // At M3 sector
       runReversed[0] = true; runReversed[1] = false; runReversed[2] = false;
       ratM1 = driveAngle - 4800;
       ratM2 = 5866.66 - driveAngle;
       ratM3 = 0;
-    }else if (driveAngle < 6400){     // Between M3 and M2 (til 6400mil)
+    }else if (driveAngle <= 6400){     // Between M3 and M2 (til 6400mil)
       runReversed[0] = false; runReversed[1] = false; runReversed[2] = true;
       ratM1 = 0;
       ratM2 = (6400 - driveAngle) + 533.33;
@@ -115,22 +116,24 @@ void localDrive(float driveAngle){
   }
 
   // Convert to motor drive percentages and compensate for direction
-  M1 = ratM1 / scaledownFactor;
-  M2 = ratM2 / scaledownFactor;
-  M3 = ratM3 / scaledownFactor;
+  M1 = round(ratM1 / scaledownFactor);
+  M2 = round(ratM2 / scaledownFactor);
+  M3 = round(ratM3 / scaledownFactor);
+
+  
 
   if (runReversed[0]) M1 = -1 * M1;
   if (runReversed[1]) M2 = -1 * M2;
   if (runReversed[2]) M3 = -1 * M3;
 
   // Compensate for imbalance by equalising rotation ratio
-  if ((M1 + M2 + M3) != 0){
-    if (M1 == 0){
-      M1 = -1 * (M2 + M3);
-    }else if (M2 == 0){
-      M2 = -1 * (M1 + M3);
-    }else if (M3 == 0){
-      M3 = -1 * (M1 + M2);
+  if ((M1 + M2 + M3) != 0.00){
+    if (ratM1 == 0.00){
+      M1 = 0.00 - (M1 + M2 + M3);
+    }else if (ratM2 == 0.00){
+      M2 = 0.00 - (M1 + M2 + M3);
+    }else if (ratM3 == 0.00){
+      M3 = 0.00 - (M1 + M2 + M3);
     }
   }
 }
@@ -153,13 +156,13 @@ void driveAll(void){
 
   // Drive motors
   if (M1 > 0) analogWrite(drv[1], M1);
-  else analogWrite(drv[0], M1);
+  else if (M1 < 0) analogWrite(drv[0], M1 * 2.55);
   
   if (M2 > 0) analogWrite(drv[3], M2);
-  else analogWrite(drv[2], M2);
+  else if (M2 < 0) analogWrite(drv[2], M2 * 2.55);
   
   if (M3 > 0) analogWrite(drv[5], M3);
-  else analogWrite(drv[4], M3);
+  else if (M3 < 0) analogWrite(drv[4], M3);
 }
 
 
