@@ -20,9 +20,10 @@ Adafruit_HMC5883_Unified mag = Adafruit_HMC5883_Unified(12345); // Instantiate m
 // Pinouts of motors:    1CCW 1CW | 2CCW 2CW | 3CCW 3CW
 const int drv[6] =       {3,   2,    5,   4,    7,   6};
 
+
 // SENSOR DATA CACHE //
 float milHeading;       // Raw value (in millirads) from magnetometer
-int colourVals[3];      // Raw colour values from colour sensors
+int colourVal[3];       // Raw colour values from colour sensors
 
 int colourWhite;        // Recorded value for field green
 int colourGreen;        // Recorded value for field line
@@ -31,18 +32,28 @@ int maxDrive = 30;      // Value of most activated motor (%)
 
 void setup() {
   mag.begin(); // Initialise magnetometer
+  pinMode(13, OUTPUT);
+  digitalWrite(13, HIGH); // Activate colour sensor lights
+  Serial.begin(9600);
   
 }
 
 void loop() {
   relaxMag(); // Refreshes current mag readings (uses internally scheduled delay)
-  
+  relaxColour();
+  Serial.println(colourVal[0]);
+  Serial.println(colourVal[1]);
+  Serial.println(colourVal[2]);
+  Serial.println();
+    delay(500);
 }
 
 
 // Relaxes information from colour sensors
 void relaxColour(void){
-  
+  colourVal[0] = analogRead(A1);
+  colourVal[1] = analogRead(A3);
+  colourVal[2] = analogRead(A5);
 }
 
 // Relaxes information from magnetometer (internal delay)
