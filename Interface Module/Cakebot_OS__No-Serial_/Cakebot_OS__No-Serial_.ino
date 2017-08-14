@@ -45,11 +45,64 @@ void setup() {
 
   drawMainWindow("    - COMD MODULE MONITOR -",0xFFE0, GREEN);  // Draws menubar and screen borders
   drawBotSchematic();
+
+  //Draw loading screen
+  tft.setCursor(51, 85);
+  tft.setTextColor(ORANGE);  tft.setTextSize(1);
+  tft.print("Loading...");
+  
+  tft.setCursor(10, 180);
+  tft.setTextColor(GREEN);  tft.setTextSize(1);
+  tft.print("INTERFACE MODULE STATUS:   OK");
+
+  tft.setCursor(10, 200);
+  tft.setTextColor(GREEN);  tft.setTextSize(1);
+  tft.print("COMMAND MODULE STATUS:"); tft.setTextColor(ORANGE); tft.print("     INITIALISING...");
+
+  tft.setCursor(10, 220);
+  tft.setTextColor(GREEN);  tft.setTextSize(1);
+  tft.print("SECONDARY MODULE STATUS:"); tft.setTextColor(PINK); tft.print("   -- DISABLED --");
+
+  tft.drawRect(5, 175,  160, 58,  GREEN);
+  tft.drawRect(165, 175,  147, 58,  GREEN);
+
+  tft.drawCircle(180, 50, 20, WHITE);
+  tft.drawLine  (180, 50, 180, 31 , RED);
+  tft.drawCircle(230, 50, 20, WHITE);
+  tft.drawLine  (230, 50, 230, 31 , YELLOW);
+  tft.drawCircle(280, 50, 20, WHITE);
+  tft.drawLine  (280, 50, 280, 31 , WHITE);
+
+  tft.setCursor(172, 78);
+  tft.setTextColor(WHITE);  tft.setTextSize(1);
+  tft.print("MAG      IR     MOTOR");
+
+  tft.setCursor(140, 125);
+  tft.setTextColor(ORANGE);  tft.setTextSize(2);
+  tft.print("LOADING SERIAL");
+
+  tft.setCursor(11, 22);
+  tft.setTextColor(ORANGE);  tft.setTextSize(2);
+  tft.print("##       ##");
+  tft.setCursor(25, 150);
+  tft.print("##");
+
+  delay(2000);
+
+  // Enter error mode
+  tft.fillRect(166, 190,  110, 30,  BLACK);
+  tft.fillRect(140, 100,  180, 50,  BLACK);
+  tft.fillRect(51, 70,  68, 30,  BLACK);
 }
 
 
 void loop() {
-  
+  // RED LOOP
+  tft.setCursor(11, 22);
+  tft.setTextColor(RED);  tft.setTextSize(2);
+  tft.print("##       ##");
+  tft.setCursor(25, 150);
+  tft.print("##");
 }
 
 
@@ -110,7 +163,7 @@ void drawBotSchematic(){
     21.29,  81.14,  // Point E
     41.29,  46.5,    // Point B
     YELLOW);
-  tft.drawLine(21.29, 81.14, 28.29, 39 , BLACK); // Cover leftover line from triangles drawn
+   tft.drawLine(21.29, 81.14, 28.29, 39 , BLACK);// Cover leftover line from triangles drawn
 
   // Triangles for motor 2 (no inbuilt slanted rectangle function)
   tft.fillTriangle( // M2-1 (Filling)
