@@ -45,7 +45,7 @@ void setup() {
   Serial.begin(9600); // TEMP
   pinMode(13, OUTPUT);
   digitalWrite(13, HIGH);
-  localDrive(1600);
+  localDrive(6400);
   localRot(0);
   driveAll();
   
@@ -53,6 +53,17 @@ void setup() {
 
 void loop() {
   relaxMag(); // Refreshes current mag readings (uses internally scheduled delay)
+  if(digitalRead(48) == LOW){
+    localDrive(6400);
+    localRot(0);
+    driveAll();
+  }else{
+    M1 = 0;
+    M2 = 0;
+    M3 = 0;
+    localRot(0);
+    driveAll();
+  }
 }
 
 // Sets local drive values based on local angle (mils)
@@ -161,12 +172,24 @@ void driveAll(void){
   // Drive motors
   if (M1 > 0) analogWrite(drv[1], M1);
   else if (M1 < 0) analogWrite(drv[0], M1 * 2.55);
+  else if (M1 == 0){
+    analogWrite(drv[1], M1);
+    analogWrite(drv[0], M1);
+  }
   
   if (M2 > 0) analogWrite(drv[3], M2);
   else if (M2 < 0) analogWrite(drv[2], M2 * 2.55);
+  else if (M2 == 0){
+    analogWrite(drv[3], M2);
+    analogWrite(drv[2], M2);
+  }
   
   if (M3 > 0) analogWrite(drv[5], M3* 2.55);
   else if (M3 < 0) analogWrite(drv[4], M3* 2.55);
+  else if (M3 == 0){
+    analogWrite(drv[5], M3);
+    analogWrite(drv[4], M3);
+  }
 }
 
 
