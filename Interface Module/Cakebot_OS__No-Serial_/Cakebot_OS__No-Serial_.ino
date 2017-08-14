@@ -1,8 +1,8 @@
-/*  Cakebot OS screen manager
+/*  Cakebot OS Screen Filler
  *  C: 12/07/2017 | LM: 12/07/2017
  *  ----------------------------------
- *  Reads in sensor info via serial from command unit and outputs to screen
- *  Touchscreen hardware unreliable - not using touch
+ *  This code does not interact with serial in any way - it is simply a demo 
+ *  showcase of the GUI functions
  *  ----------------------------------
  *  By Rithesh R Jayaram
  *  ----------------------------------
@@ -103,6 +103,20 @@ void loop() {
   tft.print("##       ##");
   tft.setCursor(25, 150);
   tft.print("##");
+
+  tft.setCursor(130, 125);
+  tft.setTextColor(RED);  tft.setTextSize(2);
+  tft.print("ERR: NO SERIAL!");
+
+  tft.setCursor(10, 200);
+  tft.setTextColor(GREEN);  tft.setTextSize(1);
+  tft.print("COMMAND MODULE STATUS:"); tft.setTextColor(RED); tft.print("     NOT RESPONDING!");
+
+  tft.drawTriangle(
+    28.29,  39,
+    8.29,   73.64,
+    21.29,  81.14,
+    YELLOW);
 }
 
 
