@@ -87,12 +87,13 @@ void setup() {
   tft.setCursor(25, 150);
   tft.print("##");
 
-  delay(2000);
+  delay(8000);
 
   // Enter error mode
   tft.fillRect(166, 190,  110, 30,  BLACK);
   tft.fillRect(140, 100,  180, 50,  BLACK);
   tft.fillRect(51, 70,  68, 30,  BLACK);
+  drawMainWindow("    - COMD MODULE MONITOR -",0xFFE0, GREEN);  // Draws menubar and screen borders
 }
 
 
@@ -104,7 +105,7 @@ void loop() {
   tft.setCursor(25, 150);
   tft.print("##");
 
-  tft.setCursor(130, 125);
+  tft.setCursor(130, 145);
   tft.setTextColor(RED);  tft.setTextSize(2);
   tft.print("ERR: NO SERIAL!");
 
@@ -113,10 +114,41 @@ void loop() {
   tft.print("COMMAND MODULE STATUS:"); tft.setTextColor(RED); tft.print("     NOT RESPONDING!");
 
   tft.drawTriangle(
-    28.29,  39,
-    8.29,   73.64,
-    21.29,  81.14,
+    75,  50,
+    45,  120,
+    105,  120,
+    RED);
+
+  tft.setCursor(62, 80);
+  tft.setTextColor(YELLOW);  tft.setTextSize(5);
+  tft.print("!");
+
+  delay(500);
+  // YELLOW LOOP
+  tft.setCursor(11, 22);
+  tft.setTextColor(YELLOW);  tft.setTextSize(2);
+  tft.print("##       ##");
+  tft.setCursor(25, 150);
+  tft.print("##");
+
+  tft.setCursor(130, 145);
+  tft.setTextColor(YELLOW);  tft.setTextSize(2);
+  tft.print("ERR: NO SERIAL!");
+
+  tft.setCursor(10, 200);
+  tft.setTextColor(GREEN);  tft.setTextSize(1);
+  tft.print("COMMAND MODULE STATUS:"); tft.setTextColor(YELLOW); tft.print("     NOT RESPONDING!");
+
+  tft.drawTriangle(
+    75,  50,
+    45,  120,
+    105,  120,
     YELLOW);
+
+  tft.setCursor(62, 80);
+  tft.setTextColor(RED);  tft.setTextSize(5);
+  tft.print("!");
+  delay(500);
 }
 
 

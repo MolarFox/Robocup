@@ -34,26 +34,38 @@ void setup() {
   mag.begin(); // Initialise magnetometer
   pinMode(13, OUTPUT);
   digitalWrite(13, HIGH); // Activate colour sensor lights
+  delay(5);
+  relaxColour();  // Refresh colour sensor readings
+  
+  //TEMP
   Serial.begin(9600);
   
 }
 
 void loop() {
-  relaxMag(); // Refreshes current mag readings (uses internally scheduled delay)
-  relaxColour();
+  relaxMag();     // Refreshes current mag readings (uses internally scheduled delay)
+  relaxColour();  // Refreshes current colour sensor readings (~300ns per cycle)
+
+
+  
+  //TEMP
   Serial.println(colourVal[0]);
   Serial.println(colourVal[1]);
   Serial.println(colourVal[2]);
   Serial.println();
-    delay(500);
+  delay(500);
 }
 
 
+
+/* --- SENSORS ---------------------------------------------------------------------------*/
 // Relaxes information from colour sensors
 void relaxColour(void){
-  colourVal[0] = analogRead(A1);
-  colourVal[1] = analogRead(A3);
-  colourVal[2] = analogRead(A5);
+  colourVal[0] = analogRead(A0);
+  delayMicroseconds(15);
+  colourVal[1] = analogRead(A7);
+  delayMicroseconds(15);
+  colourVal[2] = analogRead(A14);
 }
 
 // Relaxes information from magnetometer (internal delay)
