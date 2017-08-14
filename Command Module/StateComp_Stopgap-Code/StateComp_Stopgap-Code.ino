@@ -25,9 +25,11 @@ const int drv[6] =       {3,   2,    5,   4,    7,   6};
 float milHeading;       // Raw value (in millirads) from magnetometer
 int colourVal[3];       // Raw colour values from colour sensors
 
-int colourWhite;        // Recorded value for field green
-int colourGreen;        // Recorded value for field line
+int colourWhite[3];     // Recorded value for field green for each sensor
+int colourGreen[3];     // Recorded value for field line for each sensor
+float enemyGoal;        // Direction of enemy goal at calibration
 
+float M1, M2, M3;           // Raw motor drive values (%)
 int maxDrive = 30;      // Value of most activated motor (%)
 
 void setup() {
@@ -58,14 +60,48 @@ void loop() {
 
 
 
+/* --- ROUTINES --------------------------------------------------------------------------*/
+
+
+
+/* --- MOTORS ----------------------------------------------------------------------------*/
+
+
+
+// Drives motors
+void driveAll(void){
+  // Drive motors
+  if (M1 >= 0) analogWrite(drv[1], M1);
+  else if (M1 < 0) analogWrite(drv[0], M1);
+  
+  if (M2 >= 0) analogWrite(drv[3], M2);
+  else if (M2 < 0) analogWrite(drv[2], M2);
+  
+  if (M3 >= 0) analogWrite(drv[5], M3);
+  else if (M3 < 0) analogWrite(drv[4], M3);
+}
+
+
+// Drives bot forwards/backwards
+void driveForward(int magnitude){
+  M1 = 0;
+  M2 = magnitude;
+  M3 = -1 * magnitude;
+}
+
+// Rotates bot in place
+void rotateStatic(int magnitude){
+  M1 = magnitude;
+  M2 = magnitude;
+  M3 = magnitude;
+}
+
 /* --- SENSORS ---------------------------------------------------------------------------*/
 // Relaxes information from colour sensors
 void relaxColour(void){
   colourVal[0] = analogRead(A0);
-  delayMicroseconds(15);
   colourVal[1] = analogRead(A7);
-  delayMicroseconds(15);
-  colourVal[2] = analogRead(A14);
+  colourVal[2] = analogRead(A13);
 }
 
 // Relaxes information from magnetometer (internal delay)
