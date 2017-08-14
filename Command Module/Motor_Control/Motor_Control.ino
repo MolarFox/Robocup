@@ -23,7 +23,7 @@ Adafruit_HMC5883_Unified mag = Adafruit_HMC5883_Unified(12345); // Instantiate m
 // STATIC VARIABLES //
 #define magReadDelay 2  // Minimum delay between magnetometer readings (milliseconds)
 // Pinouts of motors:    1CCW 1CW | 2CCW 2CW | 3CCW 3CW
-const int drv[6] =       {7,   6,    5,   4,    3,   2};
+const int drv[6] =       {3,   2,    5,   4,    7,   6};
 
 // VARIABLES //
 byte rotConType= 0;     // Current rotation mode (0 = auto, 1 = local, 2 = global)
@@ -35,7 +35,7 @@ int locRotAngle, globRotAngle, locDriveAngle, globDriveAngle; // Values for cont
 float ratM1, ratM2, ratM3;  // Motor drive ratios
 float M1, M2, M3;           // Raw motor drive values (%)
 float offM1, offM2, offM3;  // Offset of each motor when driven (for rotation) (%)
-int maxDrive = 5;          // Value of most activated motor (%)
+int maxDrive = 30;          // Value of most activated motor (%)
 
 
 void setup() {
@@ -45,8 +45,8 @@ void setup() {
   Serial.begin(9600); // TEMP
   pinMode(13, OUTPUT);
   digitalWrite(13, HIGH);
-  localDrive(0);
-  localRot(100);
+  localDrive(1600);
+  localRot(0);
   driveAll();
   
 }
@@ -154,6 +154,10 @@ void driveAll(void){
   M2 = M2 + offM2;
   M3 = M3 + offM3;
 
+  Serial.println(M1);
+  Serial.println(M2);
+  Serial.println(M3);
+  
   // Drive motors
   if (M1 > 0) analogWrite(drv[1], M1);
   else if (M1 < 0) analogWrite(drv[0], M1 * 2.55);
@@ -161,8 +165,8 @@ void driveAll(void){
   if (M2 > 0) analogWrite(drv[3], M2);
   else if (M2 < 0) analogWrite(drv[2], M2 * 2.55);
   
-  if (M3 > 0) analogWrite(drv[5], M3);
-  else if (M3 < 0) analogWrite(drv[4], M3);
+  if (M3 > 0) analogWrite(drv[5], M3* 2.55);
+  else if (M3 < 0) analogWrite(drv[4], M3* 2.55);
 }
 
 
